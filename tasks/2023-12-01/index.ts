@@ -3,7 +3,7 @@ type Gift = string;
 export class GiftRegistry {
   private readonly children: Map<number, Gift[]> = new Map();
 
-  addGift(id: number, gift: string): void {
+  addGift(id: number, gift: Gift): void {
     const gifts = this.children.get(id) ?? [];
 
     gifts.push(gift);
@@ -11,7 +11,7 @@ export class GiftRegistry {
     this.children.set(id, gifts);
   }
 
-  removeGift(id: number, gift: string): void {
+  removeGift(id: number, gift: Gift): void {
     const gifts = this.children.get(id);
 
     if (!gifts) {
