@@ -1,44 +1,34 @@
 type Gift = string;
 
-interface Child {
-  readonly id: number;
-  readonly gifts: Gift[];
-}
-
 export class GiftRegistry {
-  private readonly children: Child[] = [];
+  private readonly children: Map<number, Gift[]> = new Map();
 
   addGift(id: number, gift: string): void {
-    const child = this.findChildById(id);
+    const gifts = this.children.get(id) ?? [];
 
-    if (child) {
-      child.gifts.push(gift);
-    } else {
-      this.children.push({ id, gifts: [gift] });
-    }
+    gifts.push(gift);
+
+    this.children.set(id, gifts);
   }
 
   removeGift(id: number, gift: string): void {
-    const child = this.findChildById(id);
+    const gifts = this.children.get(id);
 
-    if (!child) {
+    if (!gifts) {
       throw new Error('Child not found');
     }
 
-    const giftIndex = child.gifts.indexOf(gift);
+    const index = gifts.indexOf(gift);
 
-    if (giftIndex === -1) {
+    if (index === -1) {
       throw new Error('Gift not found');
     }
 
-    child.gifts.splice(giftIndex, 1);
+    gifts.splice(index, 1);
+    this.children.set(id, gifts);
   }
 
   getGiftsForChild(id: number): Gift[] | null {
-    return this.findChildById(id)?.gifts || null;
-  }
-
-  private findChildById(id: number): Child | null {
-    return this.children.find((child) => child.id === id) || null;
+    return this.children.get(id) ?? null;
   }
 }
